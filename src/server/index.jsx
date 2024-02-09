@@ -1,0 +1,1 @@
+export const URL_SERVER = "https://engagement.pptik.id/api/v1";
