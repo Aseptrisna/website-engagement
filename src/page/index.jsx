@@ -179,7 +179,7 @@ function TestimonialCard({ item, classes }) {
           Kelas: {item.course}
         </Typography>
         <Typography variant="body2" color="textSecondary" component="p">
-          Index Eng: {item.confidence}
+        Engagement Index: {item.confidence}
         </Typography>
         {/* Link to detail page with username parameter */}
         <Button

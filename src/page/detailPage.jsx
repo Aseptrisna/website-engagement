@@ -1,6 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { Card, CardContent, Typography, Button, Container, Grid } from "@material-ui/core";
+import {
+  Card,
+  CardContent,
+  Typography,
+  Button,
+  Container,
+  Grid,
+} from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { URL_SERVER } from "../server";
 
@@ -92,7 +99,7 @@ function Detail() {
   return (
     <div className={classes.root}>
       <Container>
-      <Typography variant="h4" gutterBottom>
+        <Typography variant="h4" gutterBottom>
           {/* Data Diri */}
         </Typography>
         <Card>
@@ -136,15 +143,14 @@ function TestimonialCard({ item }) {
           {item.course}
         </Typography>
         <Typography variant="body2" color="textSecondary" component="p">
-          Index Eng: {item.confidence}
+          Engagement Index: {item.confidence}
         </Typography>
         <Typography variant="body2" color="textSecondary" component="p">
           EXP: {item.expression}
         </Typography>
         <Typography variant="body2" color="textSecondary" component="p">
-  {new Date(item.timestamp).toLocaleString()}
-</Typography>
-
+          {new Date(item.timestamp).toLocaleString()}
+        </Typography>
       </CardContent>
     </Card>
   );
