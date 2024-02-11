@@ -41,6 +41,13 @@ const useStyles = makeStyles({
     justifyContent: "center",
     alignItems: "center",
   },
+  centerContainer: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    height: "100vh",
+    flexDirection: "column",
+  },
   // Media query for smaller screens
   "@media (max-width: 768px)": {
     container: {
@@ -55,6 +62,7 @@ function Home() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(8);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -63,8 +71,11 @@ function Home() {
           `${URL_SERVER}/proctoring?page=${currentPage}&limit=${itemsPerPage}`
         );
         const jsonData = await response.json();
-        setData(jsonData.data);
-        setTotalPages(jsonData.totalPages);
+        setTimeout(() => {
+          setData(jsonData.data);
+          setTotalPages(jsonData.totalPages);
+          setLoading(false);
+        }, 3000);
       } catch (error) {
         console.error("Error fetching proctoring data:", error);
       }
@@ -95,70 +106,88 @@ function Home() {
     const newItemsPerPage = parseInt(event.target.value);
     setItemsPerPage(newItemsPerPage);
   };
+  if (loading) {
+    return (
+      <div className={classes.centerContainer}>
+         <Container><Typography variant="h5">Loading...</Typography></Container>
+        
+      </div>
+    );
+  }
 
+  if (data.length === 0) {
+    return (
+      <div className={classes.centerContainer}>
+         <Container>
+        <Typography variant="h5">Data tidak ditemukan</Typography></Container>
+      </div>
+    );
+  }
   return (
-    <div className={classes.root}>
-      <Container>
-        <Card>
-          <CardContent>
-            <Typography variant="h4" gutterBottom>
-              Data Engagement
-            </Typography>
-          </CardContent>
-        </Card>
-      </Container>
-      <br/>
-      <Container>
-        <div className={classes.container}>
-          {data.map((item) => (
-            <TestimonialCard
-              key={item._id}
-              item={item.data}
-              classes={classes}
-            />
-          ))}
+    <div>
+      <div className={classes.root}>
+        <Container>
+          <Card>
+            <CardContent>
+              <Typography variant="h4" gutterBottom>
+                Data Engagement
+              </Typography>
+            </CardContent>
+          </Card>
+        </Container>
+        <br />
+        <Container>
+          <div className={classes.container}>
+            {data.map((item) => (
+              <TestimonialCard
+                key={item._id}
+                item={item.data}
+                classes={classes}
+              />
+            ))}
+          </div>
+        </Container>
+        <br />
+        <div className={classes.pagination}>
+          <Button
+            variant="contained"
+            color="primary"
+            disabled={currentPage === 1}
+            onClick={prevPage}
+          >
+            Sebelumnya
+          </Button>
+          <Typography variant="body1" style={{ margin: "0 10px" }}>
+            Halaman {currentPage} dari {totalPages}
+          </Typography>
+          <Button
+            variant="contained"
+            color="primary"
+            disabled={currentPage === totalPages}
+            onClick={nextPage}
+          >
+            Berikutnya
+          </Button>
+          <input
+            type="number"
+            min="1"
+            max={totalPages}
+            value={currentPage}
+            onChange={(e) => goToPage(parseInt(e.target.value))}
+            style={{ marginLeft: "10px", width: "50px" }}
+          />
+          <Typography variant="body1">Halaman</Typography>
+          <select
+            value={itemsPerPage}
+            onChange={handleItemsPerPageChange}
+            style={{ marginLeft: "10px" }}
+          >
+            <option value="4">4</option>
+            <option value="8">8</option>
+            <option value="12">12</option>
+          </select>
+          <Typography variant="body1">Per Halaman</Typography>
         </div>
-      </Container>
-      <br />
-      <div className={classes.pagination}>
-        <Button
-          variant="contained"
-          color="primary"
-          disabled={currentPage === 1}
-          onClick={prevPage}
-        >
-          Sebelumnya
-        </Button>
-        <Typography variant="body1" style={{ margin: "0 10px" }}>
-          Halaman {currentPage} dari {totalPages}
-        </Typography>
-        <Button
-          variant="contained"
-          color="primary"
-          disabled={currentPage === totalPages}
-          onClick={nextPage}
-        >
-          Berikutnya
-        </Button>
-        <input
-          type="number"
-          min="1"
-          max={totalPages}
-          value={currentPage}
-          onChange={(e) => goToPage(parseInt(e.target.value))}
-          style={{ marginLeft: "10px", width: "50px" }}
-        />
-        <Typography variant="body1">Halaman</Typography>
-        <select
-          value={itemsPerPage}
-          onChange={handleItemsPerPageChange}
-          style={{ marginLeft: "10px" }}
-        >
-          <option value="4">4</option>
-          <option value="8">8</option>
-          <option value="12">12</option>
-        </select>
-        <Typography variant="body1">Per Halaman</Typography>
       </div>
     </div>
   );
@@ -179,7 +208,7 @@ function TestimonialCard({ item, classes }) {
           Kelas: {item.course}
         </Typography>
         <Typography variant="body2" color="textSecondary" component="p">
-        Engagement Index: {item.confidence}
+          Engagement Index: {item.confidence}
         </Typography>
         {/* Link to detail page with username parameter */}
         <Button
